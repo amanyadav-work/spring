@@ -46,7 +46,7 @@ const MyOrders = () => {
   const { isLoaded, user } = useUser();
   const { data: dataOrders, loading: loadingOrders, error: errorOrders, fn: fnOrders } = useFetch(getOrders)
   const { data: updatedOrderData, loading: updatingOrder, error: errorUpdatingOrder, fn: fnUpdateOrder } = useFetch(updateOrder);
- const [paginatedProducts, setPaginatedProducts] = useState(null)
+  const [paginatedProducts, setPaginatedProducts] = useState(null)
 
   useEffect(() => {
 
@@ -58,25 +58,27 @@ const MyOrders = () => {
 
     }
   }, [isLoaded, updatingOrder])
-  
+
   const calculateDiscount = (price, discount) => {
     price = price - ((discount / 100) * price)
     return Math.round(price)
   }
 
-  const handleCancellation = async (productID,qn) => {
+  const handleCancellation = async (orderId,ProductId, qn) => {
     await fnUpdateOrder({
-      product_id: productID,
-      status: 'Cancelled', 
-    },qn)
-   
+      id: orderId,
+      product_id: ProductId,
+      status: 'Cancelled',
+    }, qn)
+
   }
-  const handleStatusChange = async (productID, value,qn) => {
+  const handleStatusChange = async (orderId, ProductId, value, qn) => {
     await fnUpdateOrder({
-      product_id: productID,
+      id: orderId,
+      product_id: ProductId,
       status: value,
-    },qn)
-  
+    }, qn)
+
   }
 
 
@@ -87,7 +89,7 @@ const MyOrders = () => {
     return (<BarLoader className='z-10' width="100%" color='yellow' />)
   }
 
-  if (dataOrders?.length === 0 ) {
+  if (dataOrders?.length === 0) {
     return <div className='text-center place-content-center h-[90vh]'>
       <div className='flex items-center justify-center mb-5'>
         <PackageXIcon size={80} color='yellow' strokeWidth={1.5} />
@@ -99,7 +101,7 @@ const MyOrders = () => {
 
   return (
 
-    (dataOrders ) && <>
+    (dataOrders) && <>
       <div className="flex justify-center">
         <h1 className='text-4xl mt-8 pt-8 mb-16 border-t uppercase'>My Orders</h1>
       </div>
@@ -143,7 +145,7 @@ const MyOrders = () => {
                             Are you sure you want to cancel this order?
                             <span className="flex gap-3 mt-2.5">
                               <DialogClose asChild>
-                                <Button variant="destructive" onClick={() => handleCancellation(item.product_id,item.quantity)}>I'm Sure</Button>
+                                <Button variant="destructive" onClick={() => handleCancellation(item.id,item.product_id, item.quantity)}>I'm Sure</Button>
 
                               </DialogClose>
                               <DialogClose asChild>
@@ -229,7 +231,7 @@ const MyOrders = () => {
                     </div>
                   </div>
                   <p className="inline-block text-xs xs:text-base md:block w-7/12 md:w-3/12 pt-2 pr-3 md:pt-0 md:pr-0">
-                   <p className="inline">Qn:</p> × {item.quantity}
+                    <p className="inline">Qn:</p> × {item.quantity}
                   </p>
                   <p className="inline-block md:block w-5/12 md:w-2/12 text-xs xs:text-base text-right md:text-left">$ {item.amount}</p>
 
@@ -288,7 +290,7 @@ const MyOrders = () => {
                 const formattedTime = new Date(item.order_date).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
 
 
-                return <div key={item.id} className={`shadow-md p-3 sm:p-6  border-2 ${item.status === "Delivered" ? "border-green-900": item.status === "Cancelled" && " border-red-900" } md:flex gap-4 text-left md:justify-between items-center pb-3 mt-3 relative`}>
+                return <div key={item.id} className={`shadow-md p-3 sm:p-6  border-2 ${item.status === "Delivered" ? "border-green-900" : item.status === "Cancelled" && " border-red-900"} md:flex gap-4 text-left md:justify-between items-center pb-3 mt-3 relative`}>
 
                   <div className={`xs:flex md:w-7/12 gap-7 md:gap-5 items-center relative `}>
                     <Link className="w-4/12" to={`/shop/${item.products.name?.replace(/[\s\:]+/g, '-').toLowerCase()}:${item.products.id}`}>
@@ -358,8 +360,8 @@ const MyOrders = () => {
                     <div className="flex items-start mt-2">
                       <p className="w-[60px]">Status:</p>
 
-                      <Select className="text-xs xs:text-sm" defaultValue={item.status} onValueChange={(value) => handleStatusChange(item.product_id, value,item.quantity)} >
-                        <SelectTrigger className={`md:w-[125px] ${item.status === "Delivered" ? "border border-green-500 text-green-500": item.status === "Cancelled" && "border border-red-500 text-red-500" } py-1 px-2 h-fit`} disabled={item.status === "Delivered" || item.status === "Cancelled" }>
+                      <Select className="text-xs xs:text-sm" defaultValue={item.status} onValueChange={(value) => handleStatusChange(item.id, item.product_id, value, item.quantity)} >
+                        <SelectTrigger className={`md:w-[125px] ${item.status === "Delivered" ? "border border-green-500 text-green-500" : item.status === "Cancelled" && "border border-red-500 text-red-500"} py-1 px-2 h-fit`} disabled={item.status === "Delivered" || item.status === "Cancelled"}>
                           <SelectValue placeholder={item.status} />
                         </SelectTrigger>
                         <SelectContent>
@@ -375,7 +377,7 @@ const MyOrders = () => {
                 </div>
 
               })}
-                
+
 
             </div>
           </div>
@@ -419,10 +421,10 @@ const MyOrders = () => {
 
           </div>
         </section>
-        }
-        <PaginationBar productsData={dataOrders}  setPaginatedProducts={setPaginatedProducts} itemsPerPage={12} />
-  
-   
+      }
+      <PaginationBar productsData={dataOrders} setPaginatedProducts={setPaginatedProducts} itemsPerPage={12} />
+
+
 
 
     </>
