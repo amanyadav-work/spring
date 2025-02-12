@@ -1,0 +1,23 @@
+.star-rating {
+  color: #4d4d4d; /* Empty star color */
+}
+
+.star {
+  display: inline-block;
+  margin-right: 3px;
+}
+
+.star.full {
+  color: gold;  /* Full star color */
+}
+
+.star.half {
+  color: gold;
+  background: linear-gradient(to right, gold 50%, #4d4d4d 50%);
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+.star.empty {
+  color: #4d4d4d;  /* Empty star color */
+}
