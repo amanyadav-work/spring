@@ -307,11 +307,9 @@ export async function updateOrder(token, _, orderData, qn) {
     const { data, error } = await supabase
         .from('orders')
         .update(orderData)
-        .eq('product_id', orderData.product_id);  // Add this line to specify the condition
+        .eq('id', orderData.id);  // Add this line to specify the condition
 
     if (orderData.status === "Cancelled") {
-        console.log("Product ID when cancelled", orderData.product_id);
-
         // Step 3: Fetch the current stock quantity for the cancelled product
         const { data: product, error: fetchError } = await supabase
             .from('products')
